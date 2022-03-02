@@ -307,6 +307,14 @@ class grid_dbo_pre_lancamento_servicos_csv
                   $this->csv_registro .= $col_sep . $this->Delim_dados . $conteudo . $this->Delim_dados;
                   $this->NM_prim_col++;
               }
+              $SC_Label = (isset($this->New_label['data_do_servico'])) ? $this->New_label['data_do_servico'] : "Data do serviço"; 
+              if ($Cada_col == "data_do_servico" && (!isset($this->NM_cmp_hidden[$Cada_col]) || $this->NM_cmp_hidden[$Cada_col] != "off"))
+              {
+                  $col_sep = ($this->NM_prim_col > 0) ? $this->Delim_col : "";
+                  $conteudo = str_replace($this->Delim_dados, $this->Delim_dados . $this->Delim_dados, $SC_Label);
+                  $this->csv_registro .= $col_sep . $this->Delim_dados . $conteudo . $this->Delim_dados;
+                  $this->NM_prim_col++;
+              }
               $SC_Label = (isset($this->New_label['quantidade'])) ? $this->New_label['quantidade'] : "Quantidade"; 
               if ($Cada_col == "quantidade" && (!isset($this->NM_cmp_hidden[$Cada_col]) || $this->NM_cmp_hidden[$Cada_col] != "off"))
               {
@@ -324,27 +332,27 @@ class grid_dbo_pre_lancamento_servicos_csv
       $nmgp_select_count = "SELECT count(*) AS countTest from " . $this->Ini->nm_tabela; 
       if (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_sybase))
       { 
-          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, str_replace (convert(char(10),data_do_servico,102), '.', '-') + ' ' + convert(char(8),data_do_servico,20), quantidade from " . $this->Ini->nm_tabela; 
       } 
       elseif (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_mysql))
       { 
-          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, data_do_servico, quantidade from " . $this->Ini->nm_tabela; 
       } 
       elseif (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_mssql))
       { 
-       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, convert(char(23),data_do_servico,121), quantidade from " . $this->Ini->nm_tabela; 
       } 
       elseif (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_oracle))
       { 
-          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, data_do_servico, quantidade from " . $this->Ini->nm_tabela; 
       } 
       elseif (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_informix))
       { 
-          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, EXTEND(data_do_servico, YEAR TO DAY), quantidade from " . $this->Ini->nm_tabela; 
       } 
       else 
       { 
-          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, data_do_servico, quantidade from " . $this->Ini->nm_tabela; 
       } 
       $nmgp_select .= " " . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['where_pesq'];
       $nmgp_select_count .= " " . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['where_pesq'];
@@ -387,7 +395,8 @@ class grid_dbo_pre_lancamento_servicos_csv
          $this->idpessoas = $rs->fields[3] ;  
          $this->idpessoas = (string)$this->idpessoas;
          $this->mes_ano = $rs->fields[4] ;  
-         $this->quantidade = $rs->fields[5] ;  
+         $this->data_do_servico = $rs->fields[5] ;  
+         $this->quantidade = $rs->fields[6] ;  
          $this->quantidade =  str_replace(",", ".", $this->quantidade);
          $this->quantidade = (string)$this->quantidade;
          $this->sc_proc_grid = true; 
@@ -553,6 +562,21 @@ class grid_dbo_pre_lancamento_servicos_csv
    {
       $col_sep = ($this->NM_prim_col > 0) ? $this->Delim_col : "";
       $conteudo = str_replace($this->Delim_dados, $this->Delim_dados . $this->Delim_dados, $this->mes_ano);
+      $this->csv_registro .= $col_sep . $this->Delim_dados . $conteudo . $this->Delim_dados;
+      $this->NM_prim_col++;
+   }
+   //----- data_do_servico
+   function NM_export_data_do_servico()
+   {
+             $conteudo_x =  $this->data_do_servico;
+             nm_conv_limpa_dado($conteudo_x, "YYYY-MM-DD");
+             if (is_numeric($conteudo_x) && strlen($conteudo_x) > 0) 
+             { 
+                 $this->nm_data->SetaData($this->data_do_servico, "YYYY-MM-DD  ");
+                 $this->data_do_servico = $this->nm_data->FormataSaida($this->nm_data->FormatRegion("DT", "ddmmaaaa"));
+             } 
+      $col_sep = ($this->NM_prim_col > 0) ? $this->Delim_col : "";
+      $conteudo = str_replace($this->Delim_dados, $this->Delim_dados . $this->Delim_dados, $this->data_do_servico);
       $this->csv_registro .= $col_sep . $this->Delim_dados . $conteudo . $this->Delim_dados;
       $this->NM_prim_col++;
    }

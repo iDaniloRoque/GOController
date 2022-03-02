@@ -17,8 +17,8 @@ class grid_dbo_pre_lancamento_servicos_det
    var $idcontratos;
    var $idpessoas;
    var $mes_ano;
-   var $quantidade;
    var $data_do_servico;
+   var $quantidade;
    var $idpessoas_profissionais;
    var $anexo_guia;
    var $idfilial;
@@ -187,7 +187,7 @@ class grid_dbo_pre_lancamento_servicos_det
     $this->sc_where_filtro = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['where_pesq_filtro'];
     $this->nm_field_dinamico = array();
     $this->nm_order_dinamico = array();
-    $this->nm_data = new nm_data("pt_br");
+    $this->nm_data = new nm_data("en_us");
     $this->NM_raiz_img  = ""; 
     if ($this->Ini->sc_export_ajax_img)
     { 

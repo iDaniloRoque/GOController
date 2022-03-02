@@ -57,6 +57,7 @@ class grid_dbo_pre_lancamento_servicos_grid
    var $idcontratos;
    var $idpessoas;
    var $mes_ano;
+   var $data_do_servico;
    var $quantidade;
 //--- 
  function monta_grid($linhas = 0)
@@ -729,27 +730,27 @@ class grid_dbo_pre_lancamento_servicos_grid
 //----- 
    if (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_sybase))
    { 
-       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, str_replace (convert(char(10),data_do_servico,102), '.', '-') + ' ' + convert(char(8),data_do_servico,20), quantidade from " . $this->Ini->nm_tabela; 
    } 
    elseif (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_mysql))
    { 
-       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, data_do_servico, quantidade from " . $this->Ini->nm_tabela; 
    } 
    elseif (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_mssql))
    { 
-       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, convert(char(23),data_do_servico,121), quantidade from " . $this->Ini->nm_tabela; 
    } 
    elseif (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_oracle))
    { 
-       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, data_do_servico, quantidade from " . $this->Ini->nm_tabela; 
    } 
    elseif (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_informix))
    { 
-       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, EXTEND(data_do_servico, YEAR TO DAY), quantidade from " . $this->Ini->nm_tabela; 
    } 
    else 
    { 
-       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, data_do_servico, quantidade from " . $this->Ini->nm_tabela; 
    } 
    $nmgp_select .= " " . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['where_pesq']; 
    $nmgp_order_by = ""; 
@@ -835,7 +836,8 @@ class grid_dbo_pre_lancamento_servicos_grid
        $this->idpessoas = $this->rs_grid->fields[3] ;  
        $this->idpessoas = (string)$this->idpessoas;
        $this->mes_ano = $this->rs_grid->fields[4] ;  
-       $this->quantidade = $this->rs_grid->fields[5] ;  
+       $this->data_do_servico = $this->rs_grid->fields[5] ;  
+       $this->quantidade = $this->rs_grid->fields[6] ;  
        $this->quantidade =  str_replace(",", ".", $this->quantidade);
        $this->quantidade = (string)$this->quantidade;
        if (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_postgres))
@@ -858,7 +860,8 @@ class grid_dbo_pre_lancamento_servicos_grid
            $this->idcontratos = $this->rs_grid->fields[2] ;  
            $this->idpessoas = $this->rs_grid->fields[3] ;  
            $this->mes_ano = $this->rs_grid->fields[4] ;  
-           $this->quantidade = $this->rs_grid->fields[5] ;  
+           $this->data_do_servico = $this->rs_grid->fields[5] ;  
+           $this->quantidade = $this->rs_grid->fields[6] ;  
        } 
    } 
    $this->nmgp_reg_inicial = $_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['final'] + 1;
@@ -2042,6 +2045,8 @@ $nm_saida->saida("}\r\n");
    $this->css_idpessoas_grid_line = $compl_css_emb . "css_idpessoas_grid_line";
    $this->css_mes_ano_label = $compl_css_emb . "css_mes_ano_label";
    $this->css_mes_ano_grid_line = $compl_css_emb . "css_mes_ano_grid_line";
+   $this->css_data_do_servico_label = $compl_css_emb . "css_data_do_servico_label";
+   $this->css_data_do_servico_grid_line = $compl_css_emb . "css_data_do_servico_grid_line";
    $this->css_quantidade_label = $compl_css_emb . "css_quantidade_label";
    $this->css_quantidade_grid_line = $compl_css_emb . "css_quantidade_grid_line";
  }  
@@ -2431,6 +2436,14 @@ $nm_saida->saida("}\r\n");
    $nm_saida->saida("</TD>\r\n");
    } 
  }
+ function NM_label_data_do_servico()
+ {
+   global $nm_saida;
+   $SC_Label = (isset($this->New_label['data_do_servico'])) ? $this->New_label['data_do_servico'] : "Data do serviço"; 
+   if (!isset($this->NM_cmp_hidden['data_do_servico']) || $this->NM_cmp_hidden['data_do_servico'] != "off") { 
+   $nm_saida->saida("     <TD class=\"" . $this->css_scGridLabelFont . $this->css_sep . $this->css_data_do_servico_label . "\"  style=\"" . $this->css_scGridLabelNowrap . "" . $this->Css_Cmp['css_data_do_servico_label'] . "\" >" . nl2br($SC_Label) . "</TD>\r\n");
+   } 
+ }
  function NM_label_quantidade()
  {
    global $nm_saida;
@@ -2527,6 +2540,8 @@ $nm_saida->saida("}\r\n");
    $_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['labels']['idpessoas'] = $SC_Label; 
    $SC_Label = (isset($this->New_label['mes_ano'])) ? $this->New_label['mes_ano'] : "Mês/Ano"; 
    $_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['labels']['mes_ano'] = $SC_Label; 
+   $SC_Label = (isset($this->New_label['data_do_servico'])) ? $this->New_label['data_do_servico'] : "Data do serviço"; 
+   $_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['labels']['data_do_servico'] = $SC_Label; 
    $SC_Label = (isset($this->New_label['quantidade'])) ? $this->New_label['quantidade'] : "Quantidade"; 
    $_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['labels']['quantidade'] = $SC_Label; 
    if (!$this->grid_emb_form && isset($_SESSION['scriptcase']['sc_apl_conf']['grid_dbo_pre_lancamento_servicos']['lig_edit']) && $_SESSION['scriptcase']['sc_apl_conf']['grid_dbo_pre_lancamento_servicos']['lig_edit'] != '')
@@ -2754,7 +2769,8 @@ if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servic
           $this->idpessoas = $this->rs_grid->fields[3] ;  
           $this->idpessoas = (string)$this->idpessoas;
           $this->mes_ano = $this->rs_grid->fields[4] ;  
-          $this->quantidade = $this->rs_grid->fields[5] ;  
+          $this->data_do_servico = $this->rs_grid->fields[5] ;  
+          $this->quantidade = $this->rs_grid->fields[6] ;  
           $this->quantidade =  str_replace(",", ".", $this->quantidade);
           $this->quantidade = (string)$this->quantidade;
           if (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_postgres))
@@ -3095,6 +3111,44 @@ if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servic
    $nm_saida->saida("     <TD rowspan=\"" . $this->Rows_span . "\" class=\"" . $this->css_line_fonf . $this->css_sep . $this->css_mes_ano_grid_line . "\"  style=\"" . $this->Css_Cmp['css_mes_ano_grid_line'] . "\" " . $this->SC_nowrap . " align=\"\" valign=\"top\"   HEIGHT=\"0px\"><span id=\"id_sc_field_mes_ano_" . $this->SC_seq_page . "\">" . $conteudo . "</span></TD>\r\n");
       }
  }
+ function NM_grid_data_do_servico()
+ {
+      global $nm_saida;
+      if (!isset($this->NM_cmp_hidden['data_do_servico']) || $this->NM_cmp_hidden['data_do_servico'] != "off") { 
+          $conteudo = NM_encode_input(sc_strip_script($this->data_do_servico)); 
+          $conteudo_original = NM_encode_input(sc_strip_script($this->data_do_servico)); 
+          if ($conteudo === "") 
+          { 
+              $conteudo = "&nbsp;" ;  
+              $graf = "" ;  
+          } 
+          else    
+          { 
+               $conteudo_x =  $conteudo;
+               nm_conv_limpa_dado($conteudo_x, "YYYY-MM-DD");
+               if (is_numeric($conteudo_x) && $conteudo_x > 0) 
+               { 
+                   $this->nm_data->SetaData($conteudo, "YYYY-MM-DD");
+                   $conteudo = $this->nm_data->FormataSaida($this->nm_data->FormatRegion("DT", "ddmmaaaa"));
+               } 
+          } 
+          $str_tem_display = $conteudo;
+          if(!empty($str_tem_display) && $str_tem_display != '&nbsp;' && !$_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['proc_pdf'] && !$_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['embutida'] && !empty($conteudo)) 
+          { 
+              $str_tem_display = $this->getFieldHighlight('quicksearch', 'data_do_servico', $str_tem_display, $conteudo_original); 
+          } 
+              $conteudo = $str_tem_display; 
+          if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['proc_pdf'])
+          {
+              $this->SC_nowrap = "NOWRAP";
+          }
+          else
+          {
+              $this->SC_nowrap = "NOWRAP";
+          }
+   $nm_saida->saida("     <TD rowspan=\"" . $this->Rows_span . "\" class=\"" . $this->css_line_fonf . $this->css_sep . $this->css_data_do_servico_grid_line . "\"  style=\"" . $this->Css_Cmp['css_data_do_servico_grid_line'] . "\" " . $this->SC_nowrap . " align=\"\" valign=\"top\"   HEIGHT=\"0px\"><span id=\"id_sc_field_data_do_servico_" . $this->SC_seq_page . "\">" . $conteudo . "</span></TD>\r\n");
+      }
+ }
  function NM_grid_quantidade()
  {
       global $nm_saida;
@@ -3129,7 +3183,7 @@ if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servic
  }
  function NM_calc_span()
  {
-   $this->NM_colspan  = 8;
+   $this->NM_colspan  = 9;
    if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['opc_psq'])
    {
        $this->NM_colspan++;

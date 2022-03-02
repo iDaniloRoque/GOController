@@ -109,6 +109,9 @@ function Ord_cmp_init()
    $tab_ger_campos['mes_ano'] = "on";
    $tab_def_campos['mes_ano'] = "mes_ano";
    $tab_labels["mes_ano"]   = (isset($_SESSION['sc_session'][$sc_init]['grid_dbo_pre_lancamento_servicos']['labels']["mes_ano"])) ? $_SESSION['sc_session'][$sc_init]['grid_dbo_pre_lancamento_servicos']['labels']["mes_ano"] : "Mês/Ano";
+   $tab_ger_campos['data_do_servico'] = "on";
+   $tab_def_campos['data_do_servico'] = "data_do_servico";
+   $tab_labels["data_do_servico"]   = (isset($_SESSION['sc_session'][$sc_init]['grid_dbo_pre_lancamento_servicos']['labels']["data_do_servico"])) ? $_SESSION['sc_session'][$sc_init]['grid_dbo_pre_lancamento_servicos']['labels']["data_do_servico"] : "Data do serviço";
    $tab_ger_campos['quantidade'] = "on";
    $tab_def_campos['quantidade'] = "quantidade";
    $tab_labels["quantidade"]   = (isset($_SESSION['sc_session'][$sc_init]['grid_dbo_pre_lancamento_servicos']['labels']["quantidade"])) ? $_SESSION['sc_session'][$sc_init]['grid_dbo_pre_lancamento_servicos']['labels']["quantidade"] : "Quantidade";

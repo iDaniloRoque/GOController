@@ -165,6 +165,8 @@ function Sel_cmp_process()
       $tab_ger_campos['idcontratos'] = "on";
       $tab_ger_campos['idpessoas'] = "on";
       $tab_ger_campos['mes_ano'] = "on";
+      $tab_ger_campos['data_do_servico'] = "on";
+      $tab_blk_campos[] = "data_do_servico";
       $tab_ger_campos['quantidade'] = "on";
 
 

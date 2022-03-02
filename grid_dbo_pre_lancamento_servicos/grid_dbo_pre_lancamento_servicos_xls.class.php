@@ -323,27 +323,27 @@ class grid_dbo_pre_lancamento_servicos_xls
       $nmgp_select_count = "SELECT count(*) AS countTest from " . $this->Ini->nm_tabela; 
       if (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_sybase))
       { 
-          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, str_replace (convert(char(10),data_do_servico,102), '.', '-') + ' ' + convert(char(8),data_do_servico,20), quantidade from " . $this->Ini->nm_tabela; 
       } 
       elseif (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_mysql))
       { 
-          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, data_do_servico, quantidade from " . $this->Ini->nm_tabela; 
       } 
       elseif (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_mssql))
       { 
-       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+       $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, convert(char(23),data_do_servico,121), quantidade from " . $this->Ini->nm_tabela; 
       } 
       elseif (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_oracle))
       { 
-          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, data_do_servico, quantidade from " . $this->Ini->nm_tabela; 
       } 
       elseif (in_array(strtolower($this->Ini->nm_tpbanco), $this->Ini->nm_bases_informix))
       { 
-          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, EXTEND(data_do_servico, YEAR TO DAY), quantidade from " . $this->Ini->nm_tabela; 
       } 
       else 
       { 
-          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, quantidade from " . $this->Ini->nm_tabela; 
+          $nmgp_select = "SELECT idPre_lancamento, numero_da_guia, idContratos, idPessoas, mes_ano, data_do_servico, quantidade from " . $this->Ini->nm_tabela; 
       } 
       $nmgp_select .= " " . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['where_pesq'];
       $nmgp_select_count .= " " . $_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['where_pesq'];
@@ -381,7 +381,8 @@ class grid_dbo_pre_lancamento_servicos_xls
          $this->idpessoas = $rs->fields[3] ;  
          $this->idpessoas = (string)$this->idpessoas;
          $this->mes_ano = $rs->fields[4] ;  
-         $this->quantidade = $rs->fields[5] ;  
+         $this->data_do_servico = $rs->fields[5] ;  
+         $this->quantidade = $rs->fields[6] ;  
          $this->quantidade =  str_replace(",", ".", $this->quantidade);
          $this->quantidade = (string)$this->quantidade;
      if ($this->groupby_show == "S") {
@@ -723,6 +724,34 @@ class grid_dbo_pre_lancamento_servicos_xls
               }
               $this->Xls_col++;
           }
+          $SC_Label = (isset($this->New_label['data_do_servico'])) ? $this->New_label['data_do_servico'] : "Data do serviço"; 
+          if ($Cada_col == "data_do_servico" && (!isset($this->NM_cmp_hidden[$Cada_col]) || $this->NM_cmp_hidden[$Cada_col] != "off"))
+          {
+              $this->count_span++;
+              $current_cell_ref = $this->calc_cell($this->Xls_col);
+              $SC_Label = NM_charset_to_utf8($SC_Label);
+              if ($_SESSION['sc_session'][$this->Ini->sc_page]['grid_dbo_pre_lancamento_servicos']['embutida'])
+              { 
+                  $this->arr_export['label'][$this->Xls_col]['data']     = $SC_Label;
+                  $this->arr_export['label'][$this->Xls_col]['align']    = "center";
+                  $this->arr_export['label'][$this->Xls_col]['autosize'] = "s";
+                  $this->arr_export['label'][$this->Xls_col]['bold']     = "s";
+              }
+              else
+              { 
+                  if ($this->Use_phpspreadsheet) {
+                      $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                  }
+                  else {
+                      $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                      $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $SC_Label, PHPExcel_Cell_DataType::TYPE_STRING);
+                  }
+                  $this->Nm_ActiveSheet->getStyle($current_cell_ref . $this->Xls_row)->getFont()->setBold(true);
+                  $this->Nm_ActiveSheet->getColumnDimension($current_cell_ref)->setAutoSize(true);
+              }
+              $this->Xls_col++;
+          }
           $SC_Label = (isset($this->New_label['quantidade'])) ? $this->New_label['quantidade'] : "Quantidade"; 
           if ($Cada_col == "quantidade" && (!isset($this->NM_cmp_hidden[$Cada_col]) || $this->NM_cmp_hidden[$Cada_col] != "off"))
           {
@@ -843,6 +872,32 @@ class grid_dbo_pre_lancamento_servicos_xls
          }
          $this->Xls_col++;
    }
+   //----- data_do_servico
+   function NM_export_data_do_servico()
+   {
+         $current_cell_ref = $this->calc_cell($this->Xls_col);
+         if (!isset($this->NM_ctrl_style[$current_cell_ref])) {
+             $this->NM_ctrl_style[$current_cell_ref]['ini'] = $this->Xls_row;
+             $this->NM_ctrl_style[$current_cell_ref]['align'] = "CENTER"; 
+         }
+         $this->NM_ctrl_style[$current_cell_ref]['end'] = $this->Xls_row;
+         $this->data_do_servico = substr($this->data_do_servico, 0, 10);
+         if (empty($this->data_do_servico) || $this->data_do_servico == "0000-00-00")
+         {
+             if ($this->Use_phpspreadsheet) {
+                 $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $this->data_do_servico, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+             }
+             else {
+                 $this->Nm_ActiveSheet->setCellValueExplicit($current_cell_ref . $this->Xls_row, $this->data_do_servico, PHPExcel_Cell_DataType::TYPE_STRING);
+             }
+         }
+         else
+         {
+             $this->Nm_ActiveSheet->setCellValue($current_cell_ref . $this->Xls_row, $this->data_do_servico);
+             $this->NM_ctrl_style[$current_cell_ref]['format'] = $this->SC_date_conf_region;
+         }
+         $this->Xls_col++;
+   }
    //----- quantidade
    function NM_export_quantidade()
    {
@@ -910,6 +965,16 @@ class grid_dbo_pre_lancamento_servicos_xls
          $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['align']  = "left";
          $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['type']   = "char";
          $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['format'] = "";
+         $this->Xls_col++;
+   }
+   //----- data_do_servico
+   function NM_sub_cons_data_do_servico()
+   {
+         $this->data_do_servico = substr($this->data_do_servico, 0, 10);
+         $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['data']   = $this->data_do_servico;
+         $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['type']   = "data";
+         $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['align']  = "center";
+         $this->arr_export['lines'][$this->Xls_row][$this->Xls_col]['format'] = $this->SC_date_conf_region;
          $this->Xls_col++;
    }
    //----- quantidade
