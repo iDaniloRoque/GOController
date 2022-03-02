@@ -1,0 +1,7 @@
+index.php
+Controller
+selecionaExportacao
+SIM
+contr
+selecionaExportacao
+LigMd5

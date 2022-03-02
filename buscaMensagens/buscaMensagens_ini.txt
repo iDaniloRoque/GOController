@@ -1,0 +1,7 @@
+index.php
+Controller
+buscaMensagens
+SIM
+blank
+buscaMensagens
+LigMd5

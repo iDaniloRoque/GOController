@@ -1,0 +1,63 @@
+<html>
+	<head>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+      <style>
+        body{
+    		padding:0px;
+        }
+        .show-on-hover:hover > ul.dropdown-menu {
+            display: block;
+        }
+        .show-on-hover{
+        	position: fixed;
+			right: 10px;
+        	top: 0px;
+        }
+        .dropdown-menu > a:hover {
+        	background-color: #007bff;
+        	color: black;
+        }
+        .dropdown-menu{
+        	min-width: 300px;
+        	right: 10px !important;
+        	left: inherit !important;
+        	padding-top: 0px;
+			top: 30px;
+			right: 8px !important;
+        }
+        .dropdown-toggle::after{
+        	display: none !important;
+        }
+        .dropdown-toggle{
+        	background: none !important;
+        }
+        #round-badge{
+        	position: absolute;
+            top: 0px;
+			left: 30px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: red;
+            color: white;
+        }
+      </style>
+  	</head>
+  	<body>
+		<div class="container-fluid">
+          <div class="row">
+              <div class="btn-group show-on-hover">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					<img src="<?php echo sc_url_library('prj', 'Notificacoes', 'image/sino.png'); ?>"><span class="caret"></span>
+                  <span id="round-badge" class="badge">0</span>
+                </button>
+                <ul id="dropdow-main" class="dropdown-menu" role="menu">
+                </ul>
+              </div>
+          </div>
+		</div>
+  	</body>
+</html>

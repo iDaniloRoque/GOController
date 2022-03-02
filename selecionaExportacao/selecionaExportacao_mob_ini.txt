@@ -1,0 +1,7 @@
+selecionaExportacao_mob.php
+Controller
+selecionaExportacao_mob
+SIM
+contr
+selecionaExportacao
+LigMd5

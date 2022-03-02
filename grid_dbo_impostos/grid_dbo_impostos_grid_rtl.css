@@ -1,0 +1,10 @@
+.css_idimpostos_label {text-align:right;vertical-align:middle;justify-content:right;font-weight:bold;}
+.css_idimpostos_grid_line {vertical-align: top;text-align: right;}
+.css_sigla_impostos_label {text-align:left;vertical-align:middle;justify-content:left;font-weight:bold;}
+.css_sigla_impostos_grid_line {vertical-align: top;text-align: right;}
+.css_descricao_imposto_label {text-align:left;vertical-align:middle;justify-content:left;font-weight:bold;}
+.css_descricao_imposto_grid_line {vertical-align: top;text-align: right;}
+.css_percentual_default_label {text-align:right;vertical-align:middle;justify-content:right;font-weight:bold;}
+.css_percentual_default_grid_line {vertical-align: top;text-align: right;}
+.css_tipo_imposto_label {text-align:left;vertical-align:middle;justify-content:left;font-weight:bold;}
+.css_tipo_imposto_grid_line {vertical-align: top;text-align: right;}
